@@ -28,3 +28,24 @@ spec.template.metadata.labels.app: my-app  # 在 Pod 模板 用
             requests:
               cpu: "200m"
               memory: "256Mi"
+
+
+写在 value 里复用
+上面的配置写在value，然后引用间距
+{{- toYaml .Values.livenessProbe | nindent 12 }}
+
+环境变量的写法特殊:
+          env:
+            - name: APP_NAME
+              value: "{{ .Values.replicaCount}}"
+            {{- range $key, $value := .Values.env}}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+            {{- end }}
+
+两种都可以
+
+排错：
+Error: unable to build kubernetes objects from release manifest: error validating "": error validating data: ValidationError(Deployment.spec.template.spec.containers[0].env): invalid type for io.k8s.api.core.v1.Container.env: got "map", expected "array"
+
+见上文

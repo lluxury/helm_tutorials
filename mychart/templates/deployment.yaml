@@ -28,28 +28,15 @@ spec:
           ports:
             - containerPort: 80
           livenessProbe:
-            httpGet:
-              path: /
-              port: 80
-            initialDelaySeconds: 30
-            periodSeconds: 10
+            {{- toYaml .Values.livenessProbe | nindent 12 }} 
           readinessProbe:
-            httpGet:
-              path: /
-              port: 80
-            initialDelaySeconds: 15
-            periodSeconds: 5
+            {{- toYaml .Values.readinessProbe | nindent 12 }}
           resources:
-            limits:
-              cpu: "500m"
-              memory: "512Mi"
-            requests:
-              cpu: "200m"
-              memory: "256Mi"
+            {{- toYaml .Values.resources | nindent 12 }}
           env:
-            - name: KEY1
-              value: value1
-            - name: KEY2
-              value: value2
-            - name: ANOTHER_KEY
-              value: another_value
+            - name: APP_NAME
+              value: "{{ .Values.replicaCount}}"            
+            {{- range $key, $value := .Values.env}}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+            {{- end }}
