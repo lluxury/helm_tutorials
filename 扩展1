@@ -29,7 +29,25 @@ helm install mychart ./mychart-0.1.1.tgz --set replicaCount=1 --set replicaCount
 ClusterIP  (集群自用，不对外，或Headless)
 NodePort
 LoadBalancer
-ExternalName
+ExternalName （类似别名的用法，跨ns访问）
+启用 client-busybox, ExternalServer yann-client-svc
+helm install mychart ./mychart-0.1.2.tgz --namespace nginx-ns --create-namespace --wait
+这个写法很方便，但是注意，不声明的组件都会到新ns下面，包括helm对象
+
+kubectl get endpoints --all-namespaces
+登录到client pod
+wget -q -O - http://yann-nginx-svc.nginx-ns.svc.cluster.local
+wget -q -O - http://yann-client-svc
+nslookup kubernetes.default
+见 截图 helm03t
+
+用途：
+同vpc自建数据库（要建Endpoints）
+云数据库 URI
+ 多端口时ip映射
+映射外部域名
+外部ip链接 （公有ip）
+
 
   type: {{ .Values.serviceType }}
 云环境使用，这里环境不支持，最后会注释掉

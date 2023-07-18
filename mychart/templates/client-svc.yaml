@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: yann-client-svc
+  namespace: default
+spec:
+  type: ExternalName
+  externalName: yann-nginx-svc.nginx-ns.svc.cluster.local
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80

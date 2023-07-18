@@ -2,16 +2,17 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Release.Name }}-yann-nginx
+  name: yann-nginx
+  namespace: nginx-ns
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: {{ .Release.Name }}
+      app: nginx
   template:
     metadata:
       labels:
-        app: {{ .Release.Name }}
+        app: nginx
     spec:
       containers:
         - name: {{ .Release.Name }}-container
