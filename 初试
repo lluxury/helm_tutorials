@@ -1,0 +1,52 @@
+helm create mychart
+ls mychart/values.yaml
+vi mychart/values.yaml
+默认值，暂时不改
+
+ls mychart/templates/
+deployment.yaml  _helpers.tpl  hpa.yaml  ingress.yaml  NOTES.txt  serviceaccount.yaml  service.yaml  tests
+默认创建了很多文件，或者说模板
+
+先尝试最简单的架构，不使用模板
+
+当前环境见 env0
+kubectl get deploy --all-namespaces > env0
+
+替换 deployment.yaml
+vi mychart/templates/deployment.yaml
+
+问题：
+01： image: {{ .Values.image.repository }}:{{ .Values.image.tag }} 
+values 里默认没有 image tag的值，所以执行不下去,改为 latest
+
+02：
+Error: unable to build kubernetes objects from release manifest: error validating "": error validating data: ValidationError(Deployment.spec): missing required field "selector" in io.k8s.api.apps.v1.DeploymentSpec
+
+添加
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}
+
+03:
+0/1     ImagePullBackOff
+minikube ssh
+helm uninstall mychart
+证书问题，暂不处理，添加拉取策略规避
+imagePullPolicy: IfNotPresent
+
+default       deployment.apps/mychart-deployment   1/1     1            1           9s
+default       pod/mychart-deployment-68c9757b57-bssh8   1/1     Running   0             9s
+
+没有配置sa，但默认加了一个，使用的heml项目名
+default           mychart                              1         2m28s  
+
+svc 同上
+default       mychart          ClusterIP   10.100.9.75    <none>        80/TCP                   5m21s
+
+所以helm 还是比纯yaml强的，一次性都配置出来了
+
+另外 清理时记得 helm 包最好保留，清理项目用
+
+配置对应：
+{{ .Release.Name }} ->  mychart
+{{ .Values.replicaCount }} -> replicaCount: 1
