@@ -1,0 +1,30 @@
+增加一些功能，
+01 多个标签
+02 健康检查（探针）
+03 资源分配
+04 环境变量
+
+
+01 多个标签
+Deployment、Pod 和 Selector 中都使用相同的 app 标签
+
+metadata.name.labels.app: my-app  # 在 Deployment 用
+spec.selector.matchLabels.app: my-app  # 在选择器 用
+spec.template.metadata.labels.app: my-app  # 在 Pod 模板 用
+
+02 健康检查（探针）
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 30
+            periodSeconds: 10
+
+03 资源分配
+          resources:
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+            requests:
+              cpu: "200m"
+              memory: "256Mi"

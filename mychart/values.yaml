@@ -10,6 +10,7 @@ image:
   # Overrides the image tag whose default is the chart appVersion.
   tag: "latest"
 nginxVersion: 1.7.9
+defaultRegistry: "my-default-registry.com"
 
 imagePullSecrets: []
 nameOverride: ""
@@ -79,3 +80,15 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+
+
+# values.yaml
+
+# 默认的镜像仓库
+defaultRegistry: "nginx"
+
+# 用户可以覆盖的镜像仓库
+image:
+  registry: "{{ .Values.image.registry | default .Values.defaultRegistry }}"
+
