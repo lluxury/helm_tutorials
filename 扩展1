@@ -6,7 +6,8 @@
 5 定义服务名
 6 values.yaml 中定义一些默认值项目重复会怎么样
 
-
+先改一下包名，毕竟是第二个小节内容
+version: 0.1.1
 
 定义Deployment名字
 name: {{ .Release.Name }}-yann-nginx
@@ -15,21 +16,39 @@ name: {{ .Release.Name }}-yann-nginx
 image: nginx:{{ .Values.nginxVersion }}
 
 定义 副本数 （永久，临时）
+2
+helm install mychart ./mychart-0.1.1.tgz --set replicaCount=1 --set replicaCount=1
 
 定义 容器端口
-            - containerPort: 80
+            - containerPort: 79
 
 定义服务名
-  name: {{ .Release.Name }}-nginx-service
+  name: {{ .Release.Name }}-yann-nginx-service
 
 定义服务类型
+ClusterIP  (集群自用，不对外，或Headless)
+NodePort
+LoadBalancer
+ExternalName
+
   type: {{ .Values.serviceType }}
 云环境使用，这里环境不支持，最后会注释掉
+helm upgrade mychart ./mychart-0.1.1.tgz
+minikube service list
+curl 192.168.59.100:30396  访问成功
 
 values.yaml 中的更新内容：
 replicaCount: 2
 nginxVersion: 1.7.9
-serviceType: LoadBalancer
+type: LoadBalancer
 
 values.yaml 中定义一些默认值项目重复会怎么样
 没什么影响，以最后一条为准，但是不建议
+
+问题：
+1 svc 访问失败
+默认 ClusterIP 
+
+2 Connection refused
+79 端口与容器服务端口不匹配 （里面监听要改）
+
