@@ -1,0 +1,35 @@
+既然基本的实现了，下面稍微加一点变化：
+1 定义Deployment名字
+2 定义 nginx 版本
+3 定义 副本数 （永久，临时）
+4 定义 容器端口
+5 定义服务名
+6 values.yaml 中定义一些默认值项目重复会怎么样
+
+
+
+定义Deployment名字
+name: {{ .Release.Name }}-yann-nginx
+
+定义 nginx 版本
+image: nginx:{{ .Values.nginxVersion }}
+
+定义 副本数 （永久，临时）
+
+定义 容器端口
+            - containerPort: 80
+
+定义服务名
+  name: {{ .Release.Name }}-nginx-service
+
+定义服务类型
+  type: {{ .Values.serviceType }}
+云环境使用，这里环境不支持，最后会注释掉
+
+values.yaml 中的更新内容：
+replicaCount: 2
+nginxVersion: 1.7.9
+serviceType: LoadBalancer
+
+values.yaml 中定义一些默认值项目重复会怎么样
+没什么影响，以最后一条为准，但是不建议
