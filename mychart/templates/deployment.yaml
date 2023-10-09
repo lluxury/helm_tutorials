@@ -2,17 +2,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: yann-nginx
-  namespace: nginx-ns
+  name: {{ .Release.Name }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: nginx
+      app: {{ .Release.Name }}
+      role: web
+      release: my-release
   template:
     metadata:
       labels:
-        app: nginx
+        app: {{ .Release.Name }}
+        role: web
+        release: my-release        
     spec:
       containers:
         - name: {{ .Release.Name }}-container
@@ -20,4 +23,29 @@ spec:
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 80
-
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 15
+            periodSeconds: 5
+          resources:
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+            requests:
+              cpu: "200m"
+              memory: "256Mi"
+          env:
+            - name: KEY1
+              value: value1
+            - name: KEY2
+              value: value2
+            - name: ANOTHER_KEY
+              value: another_value
