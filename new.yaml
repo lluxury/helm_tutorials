@@ -1,0 +1,39 @@
+s-frontend
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: default
+  labels:
+    app: s-frontend
+  name: s-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: s-frontend
+  template:
+    metadata:
+      labels:
+        app: s-frontend
+    spec:
+      containers:
+        - image: nginx:1.7.9
+          imagePullPolicy: IfNotPresent
+          name: s-frontend
+          ports:
+            - containerPort: 8080
+
+
+argocd app create demo-app \
+  --repo https://github.com/lluxury/helm_tutorials.git \
+  --path mychart \
+  --dest-server https://kubernetes.default.svc \
+  --dest-namespace default \
+  --sync-option CreateNamespace=true \
+  --parameter namespace=default \            
+
+
+argocd cluster add prod
+ 2075  kubectl config set-context --current --namespace=argocd
+ 2076  argocd login $ARGOSERVER --core  
